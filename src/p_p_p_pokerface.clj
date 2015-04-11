@@ -1,22 +1,29 @@
-(ns p-p-p-pokerface)
+ (ns p-p-p-pokerface)
 
 (defn rank [card]
-  nil)
+  (let [[rank _] card
+    kkortit (fn[rank] ({\T 10, \J 11, \Q 12, \K 13, \A 14} rank))]
+  (if (Character/isDigit rank) (Integer/valueOf (str rank)) (kkortit rank))))
+
 
 (defn suit [card]
-  nil)
+  (let [[_ suit] card ]
+    (str suit)))
 
 (defn pair? [hand]
-  nil)
+  (= 2 (cards-of-same-value hand)))
 
 (defn three-of-a-kind? [hand]
-  nil)
+  (= 3 (cards-of-same-value hand)))
 
 (defn four-of-a-kind? [hand]
-  nil)
+  (= 4 (cards-of-same-value hand)))
+
+(defn cards-of-same-value [hand]
+  (apply max (vals (frequencies (map rank hand)))))
 
 (defn flush? [hand]
-  nil)
+  (= 5 (Integer/valueOf(apply str (vals (frequencies (map suit hand)))))))
 
 (defn full-house? [hand]
   nil)
