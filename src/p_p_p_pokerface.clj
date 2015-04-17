@@ -11,31 +11,46 @@
     (str suit)))
 
 (defn pair? [hand]
-  (= 2 (cards-of-same-value hand)))
+  (= 2 (apply max (vals (frequencies (map rank hand))))))
 
 (defn three-of-a-kind? [hand]
-  (= 3 (cards-of-same-value hand)))
+  (= 3 (apply max (vals (frequencies (map rank hand))))))
 
 (defn four-of-a-kind? [hand]
-  (= 4 (cards-of-same-value hand)))
+  (= 4 (apply max (vals (frequencies (map rank hand))))))
 
-(defn cards-of-same-value [hand]
-  (apply max (vals (frequencies (map rank hand)))))
 
 (defn flush? [hand]
   (= 5 (Integer/valueOf(apply str (vals (frequencies (map suit hand)))))))
 
 (defn full-house? [hand]
-  nil)
+  (= [2 3] (sort (vals (frequencies (map rank hand))))))
 
 (defn two-pairs? [hand]
-  nil)
+  (= [1 2 2] (sort (vals (frequencies (map rank hand))))))
 
 (defn straight? [hand]
-  nil)
+    (let [
+     arvot (map rank hand)
+     handSorted (sort arvot)
+     handSortedLowAce (sort (replace {14 1} arvot))]
+  (or
+   (and (apply < handSorted) (= 4 (- (apply max arvot) (apply min arvot))))
+   (= (range 1 6) handSortedLowAce ))))
 
 (defn straight-flush? [hand]
-  nil)
+  (and (flush? hand) (straight? hand)))
+
+(defn high-card? [hand]
+  true)
 
 (defn value [hand]
-  nil)
+(let [checkers #{[high-card? 0]  [pair? 1]
+                 [two-pairs? 2]  [three-of-a-kind? 3]
+                 [straight? 4]   [flush? 5]
+                 [full-house? 6] [four-of-a-kind? 7]
+                 [straight-flush? 8]}]
+  (apply max (second checkers))))
+
+
+
